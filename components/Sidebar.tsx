@@ -17,7 +17,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onNavigate, o
     { id: 'orders', icon: 'package_2', label: 'My Orders' },
     { id: 'studio', icon: 'edit_note', label: 'Bespoke Services' },
     { id: 'education', icon: 'school', label: 'Diamond Education' },
-    { id: 'account', icon: 'person', label: 'My Account' },
+    { id: 'profile', icon: 'person', label: 'My Account' },
     { id: 'concierge', icon: 'support_agent', label: 'Concierge' },
     { id: 'locator', icon: 'distance', label: 'Store Locator' },
   ];
@@ -58,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onNavigate, o
               <li 
                 key={item.id}
                 onClick={() => {
-                  const views: View[] = ['collection', 'studio', 'concierge', 'auctions', 'orders', 'home', 'search', 'cart', 'checkout', 'social'];
+                  const views: View[] = ['collection', 'studio', 'concierge', 'auctions', 'orders', 'home', 'search', 'cart', 'checkout', 'social', 'profile'];
                   if (views.includes(item.id as View)) {
                     onNavigate(item.id as View);
                     onClose();

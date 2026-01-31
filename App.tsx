@@ -14,6 +14,8 @@ import { Cart } from './components/Cart';
 import { Checkout } from './components/Checkout';
 import { Orders } from './components/Orders';
 import { Social } from './components/Social';
+import { SocialDetail } from './components/SocialDetail';
+import { Profile } from './components/Profile';
 import { View } from './types';
 
 const App: React.FC = () => {
@@ -63,12 +65,14 @@ const App: React.FC = () => {
       case 'auctions': return 'Live Auctions';
       case 'studio': return 'Design Studio';
       case 'collection': return 'Heritage Shop';
-      case 'social': return 'Social Circle';
+      case 'social': return 'Exquisite Contests';
+      case 'socialDetail': return 'Contest Details';
+      case 'profile': return 'My Profile';
       default: return 'Sultan';
     }
   };
 
-  const isCheckoutView = currentView === 'checkout' || currentView === 'cart';
+  const isCheckoutView = currentView === 'checkout' || currentView === 'cart' || currentView === 'socialDetail';
 
   return (
     <div className="min-h-screen bg-zinc-100 dark:bg-zinc-950 flex justify-center overflow-hidden">
@@ -87,7 +91,7 @@ const App: React.FC = () => {
         <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-primary/10 shrink-0">
           <div className="flex items-center p-4 justify-between">
             <div className="flex size-12 items-center justify-start">
-              {['home', 'search', 'studio', 'auctions', 'collection', 'social'].includes(currentView) ? (
+              {['home', 'search', 'studio', 'auctions', 'collection', 'social', 'profile'].includes(currentView) ? (
                 <button 
                   onClick={() => setIsMenuOpen(true)}
                   className="flex items-center justify-center active:scale-90 transition-transform"
@@ -96,7 +100,10 @@ const App: React.FC = () => {
                 </button>
               ) : (
                 <button 
-                  onClick={() => setCurrentView('home')}
+                  onClick={() => {
+                    if (currentView === 'socialDetail') setCurrentView('social');
+                    else setCurrentView('home');
+                  }}
                   className="flex items-center justify-center active:scale-90 transition-transform"
                 >
                   <span className="material-symbols-outlined text-[#181611] dark:text-white">arrow_back_ios</span>
@@ -110,7 +117,7 @@ const App: React.FC = () => {
               {getHeaderTitle()}
             </h1>
             <div className="flex size-12 items-center justify-end gap-3">
-              {currentView !== 'checkout' && (
+              {currentView !== 'checkout' && currentView !== 'socialDetail' && (
                 <>
                   <button 
                     onClick={() => setCurrentView('search')}
@@ -129,6 +136,9 @@ const App: React.FC = () => {
               {currentView === 'checkout' && (
                 <span className="material-symbols-outlined text-primary">shield</span>
               )}
+              {currentView === 'socialDetail' && (
+                <span className="material-symbols-outlined text-primary">share</span>
+              )}
             </div>
           </div>
         </header>
@@ -144,7 +154,9 @@ const App: React.FC = () => {
           {currentView === 'cart' && <Cart onNavigate={setCurrentView} />}
           {currentView === 'checkout' && <Checkout onNavigate={setCurrentView} />}
           {currentView === 'orders' && <Orders />}
-          {currentView === 'social' && <Social />}
+          {currentView === 'social' && <Social onNavigate={setCurrentView} />}
+          {currentView === 'socialDetail' && <SocialDetail />}
+          {currentView === 'profile' && <Profile onLogout={handleLogout} />}
         </main>
 
         {/* Persistent Bottom Tab Bar */}
@@ -155,13 +167,13 @@ const App: React.FC = () => {
                 { id: 'home', icon: 'home', label: 'Home' },
                 { id: 'collection', icon: 'diamond', label: 'Shop' },
                 { id: 'auctions', icon: 'gavel', label: 'Auction' },
-                { id: 'social', icon: 'groups', label: 'Contest' }
+                { id: 'social', icon: 'emoji_events', label: 'Contest' }
               ].map((tab) => (
                 <button 
                   key={tab.id}
                   onClick={() => setCurrentView(tab.id as View)}
                   className={`flex flex-col items-center gap-1 transition-all ${
-                    currentView === tab.id 
+                    currentView === tab.id || (tab.id === 'social' && currentView === 'socialDetail')
                       ? 'text-primary scale-110' 
                       : 'text-zinc-400'
                   }`}

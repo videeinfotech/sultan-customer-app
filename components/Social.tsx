@@ -1,88 +1,121 @@
 
 import React from 'react';
+import { View } from '../types';
 
-export const Social: React.FC = () => {
-  const posts = [
-    { user: '@ELARA_V', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC-WLPe5Xu1PsQi6-v33QaIltw-2hQxvXdSu8NOpiX4k-xWqdPRKhmd9EBS8B-k0MZzbEs8VsWMx941UYt__bOBIKh3gfa-rVV15TEh-pstQRiQa7fsjiNxs8OJiHGENkI6t9QhlXnvYIFVV8tNGkpAbDVU_ZmQgzka-Sfe9zupguIdJ-F1P4rf_lcxRAxC8RsLgm9Z_AZq4IT5F8XK-NNDzmRTXUL2TLaP2dDsScO3xUT5QzK9rCrByuIX0aE6cBwA-HRUXknr9cHP' },
-    { user: '@MAESTRO_J', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDFbtR26YgrtzsSAfUC4ZegCUNGHYKQFrsiyl-NJO2xv-9YLWMnm7W-ZvDtevM1jfG7Bp6vCRrhlERVQAa8jlGFkQY9sTlmEJqYQsc2k1aZqn3blq8Hur5sWBSE0TcCoqklzs0lteslg-BYMuMKWxz57lpuwvWvy4z2bBe_AvEfvhr3pCCxKF4PKdsQ8-HUh4oHt6KKZqUWa3fIwJ3l6cLhG7RWi07JjM1QcJSBiKGApLjn8NVujwAW8ZPoaTTUqWhoF71iy-6x9vaV' },
-    { user: '@SULTAN_STYLE', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD3GTjtoC4gT78A8QBNsmgxS_7vozkgHuvIjulpcS5V43VV9OOpS1LW-4f07B-EAqjp_W-I-o25apRXN625sd0sgrvZrWvCKryNlUI6gFFTgzVWsDKD__GkfoEWkyyJWEx2NpKidwHKWEykQbCpa16SG5wzXqBkn7Yy2NkS-EzpbNg085mbddVmkDKQi47YgCesPQpOMfbZ6I_1xLkaIWehkQcWCkcO-tZQB5vt9dtcCazinnlx4iWoRuOIbLRho40RIK_iVxMAStbm' },
-    { user: '@DIAMOND_LIFE', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOw6B1lrZ9DtdgvZHhV0X4Ie1voZ4yePTZT4fIhHcyhRRCMYKuIZJ_bZPmeF2YwiQmXivYtFPtk_R-Vp9h7Sogz3XNvLGM_SD3g1IRVvjOJgk9CLmh12MPP8JkSic2KLmkMutWKVq60vGVmww74gZnK4F6ktFTimBcdgJHiG5-DvKGQt2VCZOfp0fDxjt4DPkOpVbtsWy3Z0tKdTgww5ydmemPSwXhrc80pFoSkhdN7yuHVcLnLzUmANMIufiaVUNj2-iPMXCjGwxl' },
-    { user: '@ROYAL_GEMS', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB_vE3XFZriCiiuzxCB61c9TKl8xWzzUr9HIrPGs9CswbVv29eeJEG4FWz4jP5DvRTNOiSdwrYOe4A_t7Ok09DVC7D77Ze9vIXhymTSZwN_Sn2R_8cEft-zr4Ey5J_dB0w0WGrPNfXK9Icm4VCwan5EGs6KPYMe2n23GaEm92jQqLvAmCHcbY-B7wBc_SpIOL1vHxQyRcU2VcsoSyu91I69USMUwmyXq0lYlbdd9Shi7eDTCGWBxpyGYY_t0YRiuzcvvh1JENTQXJ3q' },
-    { user: '@HERITAGE_COLLECTOR', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCWzuMyXPhiYTUsfcto6vkDTN8WNtJzNB4LROFVOQ2aMBtDEe_XvdnUgTmR52T9XM4RgjaNkScWbMFieedzOTTkzw0QytxIcUqCI92TQ3WOkjb_kCs5PLSpveATHcUfwxos_p1x_ZdbjpoPcEzikPaOn9y18DIZk0Ja2YWx8BmEFqNH2RTj8JxvORAJytKZD-Hl24nSihVucYoby32ICVQSrzD6Gjd-UilCbPLW98BbbWLvFugNxh6ySbmERCjargUtGJw8c8AxXEK9' }
-  ];
+interface SocialProps {
+  onNavigate: (view: View) => void;
+}
 
+export const Social: React.FC<SocialProps> = ({ onNavigate }) => {
   return (
-    <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark font-display overflow-y-auto no-scrollbar pb-32">
-      {/* Contest Hero */}
-      <div className="relative w-full aspect-video flex items-center justify-center p-8 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-[#181611]/80 z-10"></div>
-        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWzuMyXPhiYTUsfcto6vkDTN8WNtJzNB4LROFVOQ2aMBtDEe_XvdnUgTmR52T9XM4RgjaNkScWbMFieedzOTTkzw0QytxIcUqCI92TQ3WOkjb_kCs5PLSpveATHcUfwxos_p1x_ZdbjpoPcEzikPaOn9y18DIZk0Ja2YWx8BmEFqNH2RTj8JxvORAJytKZD-Hl24nSihVucYoby32ICVQSrzD6Gjd-UilCbPLW98BbbWLvFugNxh6ySbmERCjargUtGJw8c8AxXEK9" className="absolute inset-0 w-full h-full object-cover blur-sm scale-110" alt="Contest Background" />
-        
-        <div className="relative z-20 flex flex-col items-center">
-          <p className="text-primary text-[10px] font-bold tracking-[0.4em] uppercase mb-2">The Sultan Heritage Contest</p>
-          <h2 className="text-white text-3xl font-serif mb-4 italic">A Legacy to Share</h2>
-          <p className="text-white/70 text-xs mb-6 max-w-xs">Show us how you wear your Sultan masterpieces and win an exclusive bespoke piece from our master artisans.</p>
-          <button className="bg-primary text-[#181611] px-8 py-3 rounded-full font-bold text-[10px] tracking-widest uppercase shadow-xl active:scale-95 transition-transform">
-            Enter Now
-          </button>
-        </div>
-      </div>
+    <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark font-serif overflow-y-auto no-scrollbar pb-32">
+      {/* Hero Section */}
+      <section className="pt-10 pb-6 px-6 text-center">
+        <p className="text-gold-muted text-xs font-medium tracking-[0.3em] uppercase mb-3">The Editorial Collection</p>
+        <h2 className="text-4xl font-light leading-tight text-charcoal dark:text-white italic">Exquisite Contests</h2>
+        <div className="w-12 h-[1px] bg-primary mx-auto mt-6"></div>
+      </section>
 
-      {/* Community Grid */}
-      <div className="px-4 mt-8">
-        <div className="flex items-end justify-between mb-6">
-          <div>
-            <h4 className="text-gold-muted text-[10px] font-bold tracking-[0.2em] uppercase mb-1">Sultan Community</h4>
-            <h3 className="text-2xl font-serif tracking-tight">Recent Submissions</h3>
-          </div>
-          <button className="text-primary text-[10px] font-bold tracking-widest uppercase border-b border-primary/30 pb-1">
-            View All
-          </button>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-3">
-          {posts.map((post, i) => (
-            <div key={i} className="aspect-square rounded-xl overflow-hidden relative group shadow-sm border border-zinc-100 dark:border-zinc-800">
-              <div className="absolute inset-0 bg-center bg-cover transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url("${post.img}")` }}></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                <div className="size-6 rounded-full border border-white/40 overflow-hidden bg-zinc-200">
-                  <div className="w-full h-full bg-primary/20 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-primary text-[10px]">person</span>
-                  </div>
-                </div>
-                <span className="text-white text-[9px] font-bold tracking-wider">{post.user}</span>
+      {/* Editorial List */}
+      <div className="space-y-12 px-4">
+        {/* Contest Card 1: The Royal Gala */}
+        <div className="group">
+          <div className="relative overflow-hidden rounded-xl bg-white dark:bg-zinc-800/50 shadow-sm border border-zinc-100 dark:border-zinc-800 transition-all duration-300">
+            <div 
+              className="aspect-[4/5] w-full bg-center bg-no-repeat bg-cover" 
+              style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuB8kzq19oL0VK88U3nyy3dG-PDpsxMHs6e14DXzOoWJThuDi8cC_Wedb3edTMjIciug52iKwiTL5TgeEK1UUw0v0cb-PN6s9DbhhKqE3XfLKAjPlZT5TzAzJgUNRltchqLG-JrUZc9X-fqcrSdo75zViD-GbDCx0CTLTW9lwjXCuQVX9-dEkLbhJm2BbGpyEJJvz38tvSEzl6isoCe7-VUtKljDlEsPsDomoel9i14RrST1Fyw7PUdjsKbkdshZQB01Lw6eFeyBkFe9")' }}
+            >
+              <div className="absolute top-4 left-4">
+                <span className="bg-primary text-[#181611] text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 rounded-full backdrop-blur-sm">Joined</span>
               </div>
             </div>
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-2xl font-semibold text-charcoal dark:text-white leading-tight">The Royal Gala</h3>
+                <span className="text-primary text-xs font-bold">$12k Value</span>
+              </div>
+              <p className="text-gold-muted text-sm leading-relaxed mb-6 font-light font-noto">
+                Win a signature 2-carat Emerald Cut Ring. Inspired by the golden hues of desert sunsets and royal heritage.
+              </p>
+              <div className="flex items-center justify-between border-t border-primary/10 pt-4">
+                <span className="text-[10px] text-gold-muted italic uppercase tracking-widest font-noto">Entry Confirmed</span>
+                <button 
+                  onClick={() => onNavigate('socialDetail')}
+                  className="text-charcoal dark:text-white text-[11px] font-bold tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all uppercase"
+                >
+                  View Entry <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Contest Card 2: Midnight Sparkle */}
+        <div className="group">
+          <div className="relative overflow-hidden rounded-xl bg-white dark:bg-zinc-800/50 shadow-sm border border-zinc-100 dark:border-zinc-800 transition-all duration-300">
+            <div 
+              className="aspect-[4/5] w-full bg-center bg-no-repeat bg-cover" 
+              style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCQmc0ADEQbsTXVGH3gayK9QW6bsPVvUQWcc9X3rXCViLvgq584mxTMg3oUQ8b_JhASPRDCaALpnws0ykj0v_K4zv7h08WlyI9lFIRMgsy5BLjNVL0R2YbID-r9Nk1Yr4pPwNkVh4OnCCnJfMzKzY_8hSkP0BJ3n2tF4WxuHU9MzPzFWGBtGo_pjJX4NjcCjEmpWtlIuIgkD5HHc8PR9KOj2cGpYQZe4Ar1fP5qFKMFpyUymtBdekXMBKW_F3Ku1bFlee9yp4mWU5Ow")' }}
+            >
+              <div className="absolute top-4 left-4">
+                <span className="bg-white/90 dark:bg-zinc-900/90 text-charcoal dark:text-white text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 rounded-full backdrop-blur-sm border border-primary/30">Open</span>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-2xl font-semibold text-charcoal dark:text-white leading-tight">Midnight Sparkle</h3>
+                <span className="text-primary text-xs font-bold italic font-noto">Ends in 3 days</span>
+              </div>
+              <p className="text-gold-muted text-sm leading-relaxed mb-6 font-light font-noto">
+                Showcase your unique aesthetic to win a bespoke 18k Gold bracelet set with rare ethical diamonds.
+              </p>
+              <div className="flex items-center justify-between border-t border-primary/10 pt-4 font-noto">
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-gold-muted uppercase tracking-[0.1em]">Participating</span>
+                  <span className="text-xs font-bold text-charcoal dark:text-white">1.2k Entrants</span>
+                </div>
+                <button 
+                  onClick={() => onNavigate('socialDetail')}
+                  className="bg-primary hover:bg-primary/90 text-[#181611] px-6 py-2.5 rounded-lg text-xs font-bold tracking-wider transition-colors uppercase"
+                >
+                  Enter Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Contest Card 3: Desert Bloom */}
+        <div className="group">
+          <div className="relative overflow-hidden rounded-xl bg-white dark:bg-zinc-800/50 shadow-sm border border-primary/20 transition-all duration-300">
+            <div 
+              className="aspect-video w-full bg-center bg-no-repeat bg-cover" 
+              style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCuv9gne2kMpus4kvOObFFcWhPAA7inc-g2WpUp-isxFL8mRx6C3eWI4uRRY4Ry9dw49aqMmXbjBTRZMKNUO1asy8OHOBRbFIhixRR_LQeth3OOXJeDfefcF3DP92kvhemCqY-RL4o289B2dXBDjRa-fYgCMM47YRe8BlZAKQY3jiCkV271Cyb6R7XapnRengpH90KmyLokP06cSz8noYP4uTtJw7dQPDpJzRAEsf6mO-bZO3N-bgwDywpbhA8ds3nx60ROCu1NcVTL")' }}
+            ></div>
+            <div className="p-6 text-center">
+              <span className="text-primary text-[10px] font-bold tracking-[0.3em] uppercase block mb-2">Featured Series</span>
+              <h3 className="text-2xl font-light italic text-charcoal dark:text-white mb-3">Desert Bloom</h3>
+              <p className="text-xs text-gold-muted italic mb-4 font-noto">A weekly curation of botanical-inspired masterpieces.</p>
+              <button className="inline-flex items-center justify-center w-full bg-transparent border border-primary text-charcoal dark:text-primary py-3 rounded-lg text-xs font-bold tracking-widest uppercase hover:bg-primary hover:text-[#181611] transition-all">
+                Discover Prizes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Editorial Text */}
+      <footer className="mt-20 px-6 text-center font-noto">
+        <p className="text-gold-muted text-[10px] font-normal leading-normal tracking-wider opacity-70 uppercase">
+          Crafting moments of luxury, one contest at a time.<br/>
+          Sultan Luxe Exclusive Membership
+        </p>
+        <div className="flex justify-center gap-6 mt-6 pb-12">
+          {['share', 'bookmark', 'info'].map((icon) => (
+            <span key={icon} className="material-symbols-outlined text-gold-muted cursor-pointer hover:text-primary transition-colors">{icon}</span>
           ))}
         </div>
-      </div>
-
-      {/* Contest Rules Banner */}
-      <div className="px-4 mt-10">
-        <div className="bg-[#221e10] rounded-2xl p-6 relative overflow-hidden flex flex-col items-start">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <span className="material-symbols-outlined text-white text-7xl">celebration</span>
-          </div>
-          <h5 className="text-primary text-[10px] font-bold tracking-[0.3em] uppercase mb-4 relative z-10">How to Participate</h5>
-          <ul className="space-y-4 relative z-10">
-            {[
-              { icon: 'camera_enhance', text: 'Capture your bespoke Sultan moment' },
-              { icon: 'tag', text: 'Share with #SultanHeritage' },
-              { icon: 'favorite', text: 'Our artisans will select the top 3 weekly winners' }
-            ].map((rule, i) => (
-              <li key={i} className="flex items-center gap-3">
-                <div className="size-8 rounded-full bg-white/10 flex items-center justify-center text-primary border border-white/5">
-                  <span className="material-symbols-outlined text-lg">{rule.icon}</span>
-                </div>
-                <p className="text-white/80 text-xs font-medium italic">{rule.text}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="h-20"></div>
+      </footer>
     </div>
   );
 };

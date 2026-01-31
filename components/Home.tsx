@@ -20,7 +20,42 @@ export const Home: React.FC<{ onNavigate: (view: any) => void }> = ({ onNavigate
         </div>
       </div>
 
-      {/* Hero Section */}
+      {/* Hero Banner Slider - NEW SECTION */}
+      <div className="px-4 py-6">
+        <div className="relative w-full overflow-hidden rounded-xl shadow-lg border border-primary/5">
+          {/* Simple Banner Content */}
+          <div 
+            className="bg-cover bg-center flex flex-col items-center justify-center overflow-hidden min-h-[420px] relative" 
+            style={{ 
+              backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCPRedqBCYRuoPTe_aBT2Sf-wa9Z94qoA341aUrSqHn8ATvX1Uqp4T49NPR3mkmeusMP25ZHcMSGKQeoFTAFm4tQkWkiDrIMxsy0FW6QGHcn1qY4PE5y-yYKWBY3uezQ2SaWfVafwC2Nu1nybmm19FJLMa8uTz1Nm9hrfYVkxQdUf6r3_XcwRKniQLHw_6nsgz-tA4KUfzQtwWmrEJG4PNR5M0OpjvHMp-1NMGw9EKZ79OkQcLJaC4nTArgVcH6MHUFyQIvkwBU5EjK")' 
+            }}
+          >
+            {/* Centered Gold Title */}
+            <div className="z-10 text-center">
+              <p className="text-primary text-[10px] font-bold tracking-[0.3em] uppercase mb-2">Exclusive Release</p>
+              <h1 className="text-primary text-3xl font-light leading-tight tracking-[0.15em] uppercase font-serif">
+                Latest<br/><span className="font-bold">Collections</span>
+              </h1>
+              <div className="mt-6">
+                <button 
+                  onClick={() => onNavigate('collection')}
+                  className="bg-primary/90 text-white px-8 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all hover:bg-primary active:scale-95 shadow-md"
+                >
+                  Explore
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* Page Indicators */}
+          <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2.5">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-sm"></div>
+            <div className="h-1.5 w-1.5 rounded-full bg-white/60 shadow-sm"></div>
+            <div className="h-1.5 w-1.5 rounded-full bg-white/60 shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Existing Hero Section */}
       <div className="relative w-full aspect-[4/5] overflow-hidden">
         <div 
           className="absolute inset-0 bg-center bg-no-repeat bg-cover" 
