@@ -23,6 +23,8 @@
                         "background-dark": "#1a1608",
                         "gold-muted": "#8a8060",
                         "charcoal": "#333333",
+                        "luxury-gold": "#D4AF37",
+                        "luxury-gold-light": "#F4E6A3"
                     },
                     fontFamily: {
                         "display": ["Plus Jakarta Sans", "sans-serif"],
@@ -84,6 +86,24 @@
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
         }
+        .gold-gradient {
+            background: linear-gradient(135deg, #D4AF37 0%, #F4E6A3 50%, #D4AF37 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark .glass-panel {
+            background: rgba(26, 22, 8, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .swatch-active {
+            @apply ring-2 ring-[#D4AF37] ring-offset-2 scale-110 shadow-lg;
+        }
+        .custom-scrollbar::-webkit-scrollbar { display: none; }
+        .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
     <script type="importmap">
 {

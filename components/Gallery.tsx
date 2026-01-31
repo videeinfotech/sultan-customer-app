@@ -1,6 +1,10 @@
 
 import React, { useState } from 'react';
-import { CollectionItem } from '../types';
+import { CollectionItem, View } from '../types';
+
+interface GalleryProps {
+  onNavigate: (view: View) => void;
+}
 
 const ITEMS: CollectionItem[] = [
   {
@@ -48,7 +52,7 @@ const ITEMS: CollectionItem[] = [
 const CATEGORIES = ['All Collection', 'Necklaces', 'Rings', 'Earrings', 'Bracelets'];
 const FILTERS = ['Price', 'Carat', 'Metal', 'Shape'];
 
-export const Gallery: React.FC = () => {
+export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [activeCategory, setActiveCategory] = useState('All Collection');
 
   return (
@@ -101,14 +105,21 @@ export const Gallery: React.FC = () => {
       {/* Product Grid */}
       <div className="px-4 grid grid-cols-2 gap-4">
         {ITEMS.map((item) => (
-          <div key={item.id} className="group relative bg-white dark:bg-zinc-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-zinc-50 dark:border-zinc-800 flex flex-col">
+          <div 
+            key={item.id} 
+            onClick={() => onNavigate('productDetail')}
+            className="group relative bg-white dark:bg-zinc-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-zinc-50 dark:border-zinc-800 flex flex-col cursor-pointer"
+          >
             <div className="aspect-[4/5] bg-zinc-100 dark:bg-zinc-800 overflow-hidden relative">
               <img 
                 src={item.image} 
                 alt={item.title} 
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
               />
-              <button className="absolute top-2 right-2 size-8 flex items-center justify-center bg-white/80 dark:bg-black/40 backdrop-blur rounded-full text-zinc-400 hover:text-primary transition-colors active:scale-90">
+              <button 
+                onClick={(e) => e.stopPropagation()}
+                className="absolute top-2 right-2 size-8 flex items-center justify-center bg-white/80 dark:bg-black/40 backdrop-blur rounded-full text-zinc-400 hover:text-primary transition-colors active:scale-90"
+              >
                 <span className="material-symbols-outlined text-lg">favorite</span>
               </button>
             </div>

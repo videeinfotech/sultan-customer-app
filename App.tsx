@@ -16,6 +16,7 @@ import { Orders } from './components/Orders';
 import { Social } from './components/Social';
 import { SocialDetail } from './components/SocialDetail';
 import { Profile } from './components/Profile';
+import { ProductDetail } from './components/ProductDetail';
 import { View } from './types';
 
 const App: React.FC = () => {
@@ -68,11 +69,12 @@ const App: React.FC = () => {
       case 'social': return 'Exquisite Contests';
       case 'socialDetail': return 'Contest Details';
       case 'profile': return 'My Profile';
+      case 'productDetail': return 'The Royal Solitaire';
       default: return 'Sultan';
     }
   };
 
-  const isCheckoutView = currentView === 'checkout' || currentView === 'cart' || currentView === 'socialDetail';
+  const isFullView = currentView === 'checkout' || currentView === 'cart' || currentView === 'socialDetail' || currentView === 'productDetail';
 
   return (
     <div className="min-h-screen bg-zinc-100 dark:bg-zinc-950 flex justify-center overflow-hidden">
@@ -102,6 +104,7 @@ const App: React.FC = () => {
                 <button 
                   onClick={() => {
                     if (currentView === 'socialDetail') setCurrentView('social');
+                    else if (currentView === 'productDetail') setCurrentView('collection');
                     else setCurrentView('home');
                   }}
                   className="flex items-center justify-center active:scale-90 transition-transform"
@@ -117,7 +120,7 @@ const App: React.FC = () => {
               {getHeaderTitle()}
             </h1>
             <div className="flex size-12 items-center justify-end gap-3">
-              {currentView !== 'checkout' && currentView !== 'socialDetail' && (
+              {currentView !== 'checkout' && currentView !== 'socialDetail' && currentView !== 'productDetail' && (
                 <>
                   <button 
                     onClick={() => setCurrentView('search')}
@@ -136,7 +139,7 @@ const App: React.FC = () => {
               {currentView === 'checkout' && (
                 <span className="material-symbols-outlined text-primary">shield</span>
               )}
-              {currentView === 'socialDetail' && (
+              {(currentView === 'socialDetail' || currentView === 'productDetail') && (
                 <span className="material-symbols-outlined text-primary">share</span>
               )}
             </div>
@@ -148,7 +151,7 @@ const App: React.FC = () => {
           {currentView === 'home' && <Home onNavigate={setCurrentView} />}
           {currentView === 'concierge' && <div className="h-full overflow-hidden"><Concierge /></div>}
           {currentView === 'studio' && <div className="h-full overflow-y-auto no-scrollbar"><Studio /></div>}
-          {currentView === 'collection' && <div className="h-full overflow-y-auto no-scrollbar"><Gallery /></div>}
+          {currentView === 'collection' && <div className="h-full overflow-y-auto no-scrollbar"><Gallery onNavigate={setCurrentView} /></div>}
           {currentView === 'search' && <Search onNavigate={setCurrentView} />}
           {currentView === 'auctions' && <Auctions />}
           {currentView === 'cart' && <Cart onNavigate={setCurrentView} />}
@@ -157,10 +160,11 @@ const App: React.FC = () => {
           {currentView === 'social' && <Social onNavigate={setCurrentView} />}
           {currentView === 'socialDetail' && <SocialDetail />}
           {currentView === 'profile' && <Profile onLogout={handleLogout} />}
+          {currentView === 'productDetail' && <ProductDetail onNavigate={setCurrentView} />}
         </main>
 
         {/* Persistent Bottom Tab Bar */}
-        {!isCheckoutView && (
+        {!isFullView && (
           <nav className="absolute bottom-0 w-full z-30 px-4 pb-6 pt-2 pointer-events-none">
             <div className="w-full h-16 rounded-full border shadow-2xl pointer-events-auto flex items-center justify-around px-4 transition-all duration-500 bg-white/95 dark:bg-[#1a1608]/95 backdrop-blur-xl border-primary/20">
               {[
