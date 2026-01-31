@@ -1,0 +1,7 @@
+{
+  "name": "Sultan Luxury Heritage",
+  "description": "An exclusive luxury concierge and jewelry design studio inspired by handcrafted Indian heritage, powered by Gemini AI.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
