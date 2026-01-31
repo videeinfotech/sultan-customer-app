@@ -20,4 +20,4 @@ export interface CollectionItem {
   carat?: string;
 }
 
-export type View = 'home' | 'studio' | 'concierge' | 'collection' | 'search';
+export type View = 'home' | 'studio' | 'concierge' | 'collection' | 'search' | 'auctions';

@@ -9,6 +9,7 @@ import { Gallery } from './components/Gallery';
 import { Home } from './components/Home';
 import { Sidebar } from './components/Sidebar';
 import { Search } from './components/Search';
+import { Auctions } from './components/Auctions';
 import { View } from './types';
 
 const App: React.FC = () => {
@@ -100,6 +101,7 @@ const App: React.FC = () => {
           {currentView === 'studio' && <div className="h-full overflow-y-auto no-scrollbar"><Studio /></div>}
           {currentView === 'collection' && <div className="h-full overflow-y-auto no-scrollbar"><Gallery /></div>}
           {currentView === 'search' && <Search onNavigate={setCurrentView} />}
+          {currentView === 'auctions' && <Auctions />}
         </main>
 
         {/* Persistent Bottom Tab Bar */}
@@ -107,7 +109,7 @@ const App: React.FC = () => {
           <div className="w-full h-16 rounded-full border shadow-2xl pointer-events-auto flex items-center justify-around px-4 transition-all duration-500 bg-white/95 dark:bg-[#1a1608]/95 backdrop-blur-xl border-primary/20">
             {[
               { id: 'home', icon: 'home', label: 'Home' },
-              { id: 'search', icon: 'search', label: 'Search' },
+              { id: 'auctions', icon: 'gavel', label: 'Auctions' },
               { id: 'studio', icon: 'draw', label: 'Studio' },
               { id: 'concierge', icon: 'auto_awesome', label: 'Chat' }
             ].map((tab) => (
