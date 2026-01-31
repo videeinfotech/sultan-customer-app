@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View } from '../types';
 
 interface ProductDetailProps {
@@ -19,6 +19,8 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ onNavigate, produc
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isPriceBreakupOpen, setIsPriceBreakupOpen] = useState(true);
+  
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const displayProduct = product || {
     id: '1',
@@ -36,6 +38,25 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ onNavigate, produc
   ];
 
   const sizes = ['5', '5.5', '6', '6.5', '7', '7.5'];
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const scrollPosition = scrollRef.current.scrollLeft;
+    const width = scrollRef.current.offsetWidth;
+    const newIndex = Math.round(scrollPosition / width);
+    if (newIndex !== activeImageIndex) {
+      setActiveImageIndex(newIndex);
+    }
+  };
+
+  const scrollToImage = (index: number) => {
+    if (!scrollRef.current) return;
+    const width = scrollRef.current.offsetWidth;
+    scrollRef.current.scrollTo({
+      left: index * width,
+      behavior: 'smooth'
+    });
+  };
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden pb-40 bg-background-light dark:bg-background-dark text-charcoal dark:text-white antialiased">
@@ -60,28 +81,51 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ onNavigate, produc
         </div>
       </div>
 
-      {/* Hero Image Section */}
-      <div className="px-0 @[480px]:px-4 @[480px]:py-3 relative">
+      {/* Swipable Hero Image Section */}
+      <div className="relative group">
         <div 
-          className="bg-cover bg-center flex flex-col justify-end overflow-hidden bg-white @[480px]:rounded-lg min-h-[420px] transition-all duration-700" 
-          style={{ 
-            backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 40%), url("${galleryImages[activeImageIndex]}")` 
-          }}
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar bg-white dark:bg-zinc-950 min-h-[420px]"
         >
-          <div className="flex justify-center gap-2 p-5">
-            {galleryImages.map((_, i) => (
-              <div 
-                key={i}
-                onClick={() => setActiveImageIndex(i)}
-                className={`size-2 rounded-full cursor-pointer transition-all ${activeImageIndex === i ? 'bg-primary w-4' : 'bg-white opacity-50'}`}
-              ></div>
-            ))}
-          </div>
+          {galleryImages.map((img, i) => (
+            <div 
+              key={i}
+              className="flex-shrink-0 w-full snap-center flex flex-col justify-end min-h-[420px] bg-center bg-no-repeat bg-contain"
+              style={{ 
+                backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 30%), url("${img}")` 
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Floating Navigation Dots */}
+        <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 pointer-events-none">
+          {galleryImages.map((_, i) => (
+            <div 
+              key={i}
+              onClick={() => scrollToImage(i)}
+              className={`size-2 rounded-full cursor-pointer transition-all pointer-events-auto ${activeImageIndex === i ? 'bg-primary w-5' : 'bg-white opacity-40 shadow-sm'}`}
+            ></div>
+          ))}
+        </div>
+
+        {/* Thumbnail Preview strip below main image */}
+        <div className="flex gap-2 px-4 py-4 overflow-x-auto no-scrollbar">
+          {galleryImages.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => scrollToImage(i)}
+              className={`flex-shrink-0 size-14 rounded-lg border-2 overflow-hidden transition-all ${activeImageIndex === i ? 'border-primary ring-2 ring-primary/20 scale-105' : 'border-zinc-100 dark:border-zinc-800 opacity-60'}`}
+            >
+              <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Virtual Try-On */}
-      <div className="flex px-4 py-6 justify-center">
+      <div className="flex px-4 py-4 justify-center">
         <button className="flex w-full max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-6 bg-primary/10 border border-primary/30 text-charcoal dark:text-white gap-3 text-base font-bold leading-normal tracking-[0.015em] active:scale-[0.98] transition-all">
           <span className="material-symbols-outlined text-primary" style={{ fontSize: '24px' }}>view_in_ar</span>
           <span className="font-serif">Virtual Try-On</span>

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { SplashScreen } from './components/SplashScreen';
+import { Onboarding } from './components/Onboarding';
 import { Login } from './components/Login';
 import { Registration } from './components/Registration';
 import { Concierge } from './components/Concierge';
@@ -21,13 +22,27 @@ import { View } from './types';
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
   const [currentView, setCurrentView] = useState<View>('home');
 
+  const handleSplashFinish = () => {
+    setShowSplash(false);
+    setShowOnboarding(true);
+  };
+
+  const handleOnboardingFinish = () => {
+    setShowOnboarding(false);
+  };
+
   if (showSplash) {
-    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+    return <SplashScreen onFinish={handleSplashFinish} />;
+  }
+
+  if (showOnboarding) {
+    return <Onboarding onFinish={handleOnboardingFinish} />;
   }
 
   if (!isLoggedIn) {
