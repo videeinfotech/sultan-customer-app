@@ -11,8 +11,10 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onNavigate, onLogout }) => {
   const navItems: { id: View | string; icon: string; label: string }[] = [
-    { id: 'collection', icon: 'diamond', label: 'Collections' },
-    { id: 'auctions', icon: 'gavel', label: 'Auctions' },
+    { id: 'collection', icon: 'diamond', label: 'Heritage Shop' },
+    { id: 'auctions', icon: 'gavel', label: 'Live Auctions' },
+    { id: 'social', icon: 'groups', label: 'Social Circle' },
+    { id: 'orders', icon: 'package_2', label: 'My Orders' },
     { id: 'studio', icon: 'edit_note', label: 'Bespoke Services' },
     { id: 'education', icon: 'school', label: 'Diamond Education' },
     { id: 'account', icon: 'person', label: 'My Account' },
@@ -56,7 +58,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onNavigate, o
               <li 
                 key={item.id}
                 onClick={() => {
-                  if (['collection', 'studio', 'concierge', 'auctions'].includes(item.id)) {
+                  const views: View[] = ['collection', 'studio', 'concierge', 'auctions', 'orders', 'home', 'search', 'cart', 'checkout', 'social'];
+                  if (views.includes(item.id as View)) {
                     onNavigate(item.id as View);
                     onClose();
                   }
