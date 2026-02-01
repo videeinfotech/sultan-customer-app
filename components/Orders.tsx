@@ -1,103 +1,154 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { customerApi, formatPrice } from '../api';
+import { View } from '../types';
 
-export const Orders: React.FC = () => {
+interface OrdersProps {
+  onNavigate: (view: View) => void;
+}
+
+export const Orders: React.FC<OrdersProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const orders = [
-    {
-      id: 'ORD-99281',
-      date: 'Oct 24, 2023',
-      title: '18k Gold Diamond Ring',
-      price: '$2,450.00',
-      status: 'Shipped',
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDrvsxKSh5JEhFMRQLA5KyqCM3N1JYXK1_nmQ_EOjkCl81eyK0IFJ_i9esGYvmcw7p15mQQsCHeh1i_ty2lZtyjOu4urEQRHyqIZBgQ7KffYle5Wf4t3h0Ae7tmtfhqI_O6u6hFlqj-k3xGtucoFRCa2VzHCl2mga2q8C7dKPGzI7Jxjqq5c01SUMP1bE6g4YSCDicxf0jY_Wi09V7ylfnybOzx12M5djqc1DlAvDUDi1nr8Vzx1vqANliy_hpfNenys2EZnh4taCGl',
-      type: 'active'
-    },
-    {
-      id: 'ORD-88172',
-      date: 'Sep 15, 2023',
-      title: 'Solitaire Diamond Necklace',
-      price: '$1,890.00',
-      status: 'Delivered',
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSV1yvhPp7df-jI8OfmNrUGEK6lg96vHm2UGWn4YuZTf4GFuw08_2KphuwhtLv3_aqdX1JgpkfACalwkFA8_ydEQErcZEbIxj0umDsoUeWzNoeT7IiW6kVLgx07uIQb5XbecmZGSqtShp9-7TUgwC9TDZ70VLpH-I4ny5dsUmofzUf_QAyJEFuOnRvgC7VBbt1MrKsWTobaltE4a-FIi0lxd8C1RhTU2KYBacPJzGN_mACIkgnIZWNV0XZTehbOTlhxMrFWJy5Wxmq',
-      type: 'history'
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const res = await customerApi.getOrders();
+        if (res.success) {
+          setOrders(res.data.orders || []);
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  const filteredOrders = orders.filter(o => {
+    const isActiveStatus = ['pending', 'processing', 'shipped', 'out_for_delivery'].includes(o.status.toLowerCase());
+    return activeTab === 'active' ? isActiveStatus : !isActiveStatus;
+  });
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'shipped': return 'bg-blue-500';
+      case 'delivered': return 'bg-green-500';
+      case 'cancelled': return 'bg-red-500';
+      case 'pending': return 'bg-orange-500';
+      case 'processing': return 'bg-purple-500';
+      default: return 'bg-zinc-500';
     }
-  ];
-
-  const filteredOrders = orders.filter(o => o.type === activeTab || (activeTab === 'history' && o.type === 'history'));
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark font-display overflow-y-auto no-scrollbar pb-32">
       {/* Segmented Control */}
-      <div className="px-4 py-6">
-        <div className="flex h-12 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800 p-1">
+      <div className="px-6 py-6">
+        <div className="flex h-12 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800/50 p-1 divide-x divide-zinc-200 dark:divide-zinc-700">
           <button
             onClick={() => setActiveTab('active')}
-            className={`flex-1 h-full rounded-lg text-sm font-semibold transition-all ${
-              activeTab === 'active' 
-                ? 'bg-white dark:bg-primary shadow-sm text-charcoal dark:text-[#181611]' 
-                : 'text-gold-muted'
-            }`}
+            className={`flex-1 h-full rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all ${activeTab === 'active'
+              ? 'bg-white dark:bg-primary shadow-sm text-charcoal dark:text-zinc-950'
+              : 'text-gold-muted hover:text-charcoal dark:hover:text-white'
+              }`}
           >
             Active Orders
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex-1 h-full rounded-lg text-sm font-semibold transition-all ${
-              activeTab === 'history' 
-                ? 'bg-white dark:bg-primary shadow-sm text-charcoal dark:text-[#181611]' 
-                : 'text-gold-muted'
-            }`}
+            className={`flex-1 h-full rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all ${activeTab === 'history'
+              ? 'bg-white dark:bg-primary shadow-sm text-charcoal dark:text-zinc-950'
+              : 'text-gold-muted hover:text-charcoal dark:hover:text-white'
+              }`}
           >
             Order History
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-5 px-6">
         {filteredOrders.length > 0 ? (
-          filteredOrders.map((order) => (
-            <div key={order.id} className="flex flex-col gap-4 rounded-xl bg-white dark:bg-zinc-800 p-4 shadow-sm border border-zinc-100 dark:border-zinc-700">
-              <div className="flex justify-between items-start">
-                <div className="flex flex-col gap-1">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
-                    order.status === 'Shipped' ? 'bg-primary text-white' : 'bg-green-500 text-white'
-                  }`}>
-                    {order.status}
-                  </span>
-                  <h3 className="text-sm font-bold text-charcoal dark:text-white mt-2">{order.title}</h3>
-                  <p className="text-gold-muted text-[10px]">#{order.id} • {order.date}</p>
-                </div>
-                <div 
-                  className="h-20 w-20 rounded-lg bg-cover bg-center shrink-0 border border-zinc-100 dark:border-zinc-700" 
-                  style={{ backgroundImage: `url("${order.img}")` }}
-                ></div>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t border-zinc-50 dark:border-zinc-700">
-                <p className="text-base font-extrabold text-charcoal dark:text-primary">{order.price}</p>
-                <div className="flex gap-2">
-                  {order.status === 'Shipped' ? (
-                    <button className="flex items-center justify-center rounded-lg h-9 px-4 bg-primary/10 text-primary gap-2 text-[11px] font-bold transition-transform active:scale-95">
-                      <span className="material-symbols-outlined text-sm">local_shipping</span>
-                      <span>Track Order</span>
-                    </button>
-                  ) : (
-                    <button className="flex items-center justify-center rounded-lg h-9 px-4 bg-primary text-[#181611] gap-2 text-[11px] font-bold transition-transform active:scale-95">
-                      Buy Again
-                    </button>
+          filteredOrders.map((order) => {
+            const firstItem = order.items?.[0];
+            return (
+              <div key={order.id} className="group flex flex-col gap-4 rounded-[2rem] bg-white dark:bg-zinc-800/50 p-6 shadow-sm border border-zinc-100 dark:border-white/5 hover:border-primary/20 transition-all duration-300">
+                <div className="flex justify-between items-start">
+                  <div className="flex flex-col gap-2 flex-1 pr-4">
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-[0.2em] ${getStatusColor(order.status)} text-white`}>
+                        {order.status}
+                      </span>
+                      <span className="text-[9px] font-bold text-primary uppercase tracking-widest">{order.order_number}</span>
+                    </div>
+
+                    <h3 className="text-base font-serif font-bold text-charcoal dark:text-white leading-tight mt-1">
+                      {firstItem ? firstItem.product_name : 'Bespoke Selection'}
+                      {order.items?.length > 1 && (
+                        <span className="ml-2 text-[10px] font-normal text-gold-muted">(+{order.items.length - 1} more)</span>
+                      )}
+                    </h3>
+
+                    <div className="flex items-center gap-2 text-[10px] text-gold-muted italic">
+                      <span className="material-symbols-outlined text-[12px]">calendar_today</span>
+                      {order.order_date ? new Date(order.order_date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : 'Date Unknown'}
+                    </div>
+                  </div>
+
+                  {firstItem?.product_image && (
+                    <div
+                      className="h-20 w-20 rounded-2xl bg-cover bg-center shrink-0 border border-zinc-100 dark:border-white/5 shadow-inner group-hover:scale-105 transition-transform duration-500"
+                      style={{ backgroundImage: `url("${firstItem.product_image}")` }}
+                    ></div>
                   )}
                 </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-zinc-50 dark:border-white/5">
+                  <div className="flex flex-col">
+                    <p className="text-[8px] uppercase tracking-widest text-gold-muted font-bold mb-0.5">Total Value</p>
+                    <p className="text-lg font-bold text-charcoal dark:text-primary leading-none">{formatPrice(order.total)}</p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      localStorage.setItem('current_order_id', order.id);
+                      onNavigate('orderDetail');
+                    }}
+                    className="flex items-center justify-center rounded-2xl h-10 px-6 bg-zinc-900 dark:bg-primary text-white dark:text-zinc-950 gap-2 text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 hover:bg-zinc-800 dark:hover:bg-primary-light"
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
-          <div className="mt-12 flex flex-col items-center justify-center text-center px-8">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <span className="material-symbols-outlined text-primary text-3xl">shopping_bag</span>
+          <div className="mt-20 flex flex-col items-center justify-center text-center px-10 space-y-4">
+            <div className="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center mb-2">
+              <span className="material-symbols-outlined text-primary text-4xl opacity-50">shopping_bag</span>
             </div>
-            <h4 className="text-lg font-bold">No {activeTab} orders</h4>
-            <p className="text-xs text-gold-muted dark:text-zinc-400 mt-2">Explore our latest collection of handcrafted masterpieces.</p>
+            <h4 className="text-xl font-serif font-bold text-charcoal dark:text-white">No {activeTab} Orders Available</h4>
+            <p className="text-xs text-gold-muted dark:text-zinc-500 leading-relaxed">
+              Your journey with Sultan Jewels is just beginning. Explore our masterpiece collections and find your next legacy piece.
+            </p>
+            <button
+              onClick={() => onNavigate('collection')}
+              className="mt-4 px-8 py-3 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-[0.2em] active:scale-95 transition-all"
+            >
+              Discover Collections
+            </button>
           </div>
         )}
       </div>

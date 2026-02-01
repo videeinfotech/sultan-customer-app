@@ -1,18 +1,29 @@
+import React, { useEffect, useState } from 'react';
 
-import React from 'react';
+type View = 'addresses' | 'orders' | 'concierge';
 
 interface ProfileProps {
   onLogout: () => void;
+  onNavigate: (view: View) => void;
 }
 
-export const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
+export const Profile: React.FC<ProfileProps> = ({ onLogout, onNavigate }) => {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('customer_user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
   const menuItems = [
-    { icon: 'person', label: 'Personal Information', sub: 'Name, Email, Mobile' },
-    { icon: 'location_on', label: 'Shipping Addresses', sub: '3 addresses saved' },
-    { icon: 'payments', label: 'Payment Methods', sub: 'Visa •••• 4242' },
-    { icon: 'notifications', label: 'Notifications', sub: 'Auction alerts, Order updates' },
-    { icon: 'security', label: 'Privacy & Security', sub: 'Password, Biometrics' },
-    { icon: 'help', label: 'Help & Support', sub: 'FAQ, Contact Concierge' },
+    { icon: 'person', label: 'Personal Information', sub: user?.email || 'Update your details' },
+    { icon: 'location_on', label: 'Shipping Addresses', sub: 'Manage your delivery locations', view: 'addresses' as View },
+    { icon: 'payments', label: 'Payment Methods', sub: 'Saved cards and wallets' },
+    { icon: 'notifications', label: 'Notifications', sub: 'Auction alerts, Order updates', view: 'orders' as View },
+    { icon: 'security', label: 'Privacy & Security', sub: 'Password and account safety' },
+    { icon: 'help', label: 'Help & Support', sub: 'FAQ, Contact Concierge', view: 'concierge' as View },
   ];
 
   return (
@@ -22,27 +33,25 @@ export const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
         <div className="bg-white dark:bg-zinc-800/50 rounded-2xl p-6 border border-zinc-100 dark:border-white/5 shadow-sm flex flex-col items-center text-center">
           <div className="relative mb-4">
             <div className="size-24 rounded-full border-2 border-primary p-1 overflow-hidden">
-              <img 
-                className="h-full w-full object-cover rounded-full bg-zinc-100" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6WAcb6-opdEVA4ZDnV6_MgmrgNtA0ptck89WmhNRSozCQxYFCnSCZm4QWyG4w4OstfTFofx--CcPaptTTIXZQzkhtVbYFSV7BNQnktNAooh5FFPLKpunwAJPN9qYXNKoObEdl90uzVR97tHwJUph3Ci0VeQrLmOuFoIPg1DKY7J8BdUfwAfaMKxqyWGzt6rF1BVWHdIJP-x1xkrp1rJLGfxMI8D-kikAgpgQCUaZH3x3mrNDTrx6RyH1e_8Tn6PL11XGyPFlmHyN3" 
-                alt="User Profile" 
-              />
+              <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif text-3xl font-bold">
+                {user?.name?.charAt(0) || 'S'}
+              </div>
             </div>
             <div className="absolute -bottom-1 -right-1 size-8 bg-primary rounded-full flex items-center justify-center border-4 border-white dark:border-zinc-800">
               <span className="material-symbols-outlined text-white text-base">verified</span>
             </div>
           </div>
-          <h2 className="text-charcoal dark:text-white text-2xl font-serif font-bold tracking-tight">Al-Sultan Vanderbilt</h2>
-          <p className="text-gold-muted text-[10px] font-bold uppercase tracking-[0.25em] mt-1">Royal Circle Member</p>
-          
+          <h2 className="text-charcoal dark:text-white text-2xl font-serif font-bold tracking-tight">{user?.name || 'Sultan Member'}</h2>
+          <p className="text-gold-muted text-[10px] font-bold uppercase tracking-[0.25em] mt-1">{user?.membership_level || 'Royal Circle Member'}</p>
+
           <div className="flex gap-4 mt-6 w-full">
             <div className="flex-1 bg-primary/5 rounded-xl p-3 border border-primary/10">
               <p className="text-primary text-[10px] font-bold uppercase tracking-widest mb-1">Points</p>
-              <p className="text-charcoal dark:text-white text-lg font-bold">12,450</p>
+              <p className="text-charcoal dark:text-white text-lg font-bold">{user?.loyalty_points || '0'}</p>
             </div>
             <div className="flex-1 bg-primary/5 rounded-xl p-3 border border-primary/10">
               <p className="text-primary text-[10px] font-bold uppercase tracking-widest mb-1">Status</p>
-              <p className="text-charcoal dark:text-white text-lg font-bold">Gold</p>
+              <p className="text-charcoal dark:text-white text-lg font-bold">{user?.status || 'Active'}</p>
             </div>
           </div>
         </div>
@@ -57,7 +66,7 @@ export const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
           </div>
           <div className="z-10">
             <h4 className="text-primary text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Sultan Circle Benefits</h4>
-            <p className="text-white text-sm font-medium leading-tight">You are eligible for private heritage viewing in Delhi.</p>
+            <p className="text-white text-sm font-medium leading-tight">You have exclusive early access to heritage collections.</p>
           </div>
         </div>
       </div>
@@ -66,8 +75,8 @@ export const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
       <div className="px-4 mt-8 flex flex-col gap-3 font-noto">
         <h3 className="text-gold-muted text-[10px] font-bold uppercase tracking-[0.2em] mb-1 ml-1">Account Settings</h3>
         {menuItems.map((item, i) => (
-          <button 
-            key={i} 
+          <button
+            key={i}
             className="flex items-center gap-4 p-4 bg-white dark:bg-white/5 rounded-2xl border border-zinc-100 dark:border-white/5 shadow-sm active:scale-[0.98] transition-all text-left"
           >
             <div className="size-10 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center shrink-0">
@@ -84,7 +93,7 @@ export const Profile: React.FC<ProfileProps> = ({ onLogout }) => {
 
       {/* Logout Button */}
       <div className="px-4 mt-10">
-        <button 
+        <button
           onClick={onLogout}
           className="w-full py-4 rounded-2xl border border-red-500/20 bg-red-500/5 text-red-500 font-bold text-sm uppercase tracking-widest active:scale-[0.98] transition-all flex items-center justify-center gap-2"
         >

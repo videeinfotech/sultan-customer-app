@@ -1,135 +1,235 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from '../types';
+import { customerApi, formatPrice } from '../api';
 
 interface CartProps {
   onNavigate: (view: View) => void;
 }
 
 export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
-  const cartItems = [
-    {
-      id: '1',
-      title: 'Solitaire Diamond Ring',
-      specs: '18kt Yellow Gold | 0.5ct Diamond',
-      price: '$2,450',
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBx3jxX4F6TCEs0SK5B5wS2GN8nHFBeZiERTaMWJ71ftpOed9Fb4obabU8-OWR1TpL0h9ihzOnGXsxS2kpdhDFFkVBDNbzLUy0c4oDhnA5VxWY-cboM6SfFY8oH4yTLAq6l1409Wqwb1ojxudDPq4o06UBmYQlvPgOxUgNf8Nms-LKhOUamxhjdelhOHoJ18chk6covfBP55uzTW1KNYYVVzkK5BbmtQMtXunpBqIbtBUoE-x4M4desj3FxWI_uPctcF6yR6g4xBmZY'
-    },
-    {
-      id: '2',
-      title: 'Infinity Bracelet',
-      specs: '14kt Rose Gold | 1.2ct Diamond',
-      price: '$3,800',
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBy4Jt6ub_DKUh_Cbk4bpqYHfaAO-g_uaT9boig2cEWinl9LoNeK5gqZ4mn_0PiQzRtRRNi-UMB4Pq_zTN0p_rK-YzrT-rsZEHioKt_7T1rzG-qu85MbtRhKFPYDgKapRBy4wpPpp5pM2ZP8j5btlYPYdh2bzFocmozlP-ebF821_wx4gvJcnfRDoV2r8wuJXHvgIFn7d4gcTJxD7z8BNRUZ7tD-eojll9QNm0TnC27FlLk5VeHcpI_R50he_VsHvkiA7fK2Fdy0Xg3'
+  const [cartData, setCartData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  const fetchCart = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await customerApi.getCart();
+      console.log('Cart API Response:', res);
+      if (res.success) {
+        setCartData(res.data);
+      } else {
+        setError('Failed to load cart');
+      }
+    } catch (error: any) {
+      console.error('Error fetching cart:', error);
+      setError(error.message || 'Failed to load cart');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    console.log('Cart component mounted');
+    fetchCart();
+  }, []);
+
+  const handleUpdateQuantity = async (itemId: string, newQty: number) => {
+    if (newQty < 1) return;
+    try {
+      setUpdatingId(itemId);
+      const res = await customerApi.updateCartItem(itemId, newQty);
+      if (res.success) {
+        setCartData(res.data);
+      }
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleRemoveItem = async (itemId: string) => {
+    try {
+      setUpdatingId(itemId);
+      const res = await customerApi.removeCartItem(itemId);
+      if (res.success) {
+        setCartData(res.data);
+      }
+    } catch (error) {
+      console.error('Error removing item:', error);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  if (loading && !cartData) {
+    return (
+      <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark">
+        <div className="sticky top-0 z-50 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 justify-between border-b border-primary/5">
+          <button onClick={() => onNavigate('home')} className="size-12 flex items-center justify-center text-charcoal dark:text-white active:scale-90 transition-transform">
+            <span className="material-symbols-outlined">arrow_back_ios</span>
+          </button>
+          <h2 className="text-lg font-serif font-bold tracking-tight">Shopping Bag</h2>
+          <div className="w-12"></div>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark">
+        <div className="sticky top-0 z-50 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 justify-between border-b border-primary/5">
+          <button onClick={() => onNavigate('home')} className="size-12 flex items-center justify-center text-charcoal dark:text-white active:scale-90 transition-transform">
+            <span className="material-symbols-outlined">arrow_back_ios</span>
+          </button>
+          <h2 className="text-lg font-serif font-bold tracking-tight">Shopping Bag</h2>
+          <div className="w-12"></div>
+        </div>
+        <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
+          <span className="material-symbols-outlined text-6xl text-red-300 mb-4">error</span>
+          <p className="text-zinc-500 mb-2 font-serif text-lg">{error}</p>
+          <button onClick={fetchCart} className="mt-4 bg-primary text-[#181611] px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs">Retry</button>
+        </div>
+      </div>
+    );
+  }
+
+  const items = cartData?.items || [];
+  const summary = cartData?.summary || { subtotal: 0, tax: 0, shipping: 0, total: 0 };
+
+  console.log('Cart items:', items);
+  console.log('Cart summary:', summary);
 
   return (
-    <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark font-display overflow-y-auto no-scrollbar pb-40">
-      {/* Header handled by App.tsx, but this is the cart specific content */}
-      <div className="px-4 pt-6 pb-2">
-        <span className="text-[10px] font-bold tracking-[0.2em] text-gold-muted uppercase">Selected Items</span>
+    <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark font-display overflow-y-auto no-scrollbar pb-32">
+      {/* Internal Header */}
+      <div className="sticky top-0 z-50 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 justify-between border-b border-primary/5">
+        <button onClick={() => onNavigate('home')} className="size-12 flex items-center justify-center text-charcoal dark:text-white active:scale-90 transition-transform">
+          <span className="material-symbols-outlined">arrow_back_ios</span>
+        </button>
+        <h2 className="text-lg font-serif font-bold tracking-tight">Shopping Bag</h2>
+        <div className="w-12"></div>
       </div>
 
-      <div className="flex flex-col gap-4 px-4 py-2">
-        {cartItems.map((item) => (
-          <div key={item.id} className="flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-zinc-800 p-3 border border-zinc-100 dark:border-zinc-700 shadow-sm">
-            <div 
-              className="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg shrink-0" 
-              style={{ backgroundImage: `url("${item.img}")` }}
-            ></div>
-            <div className="flex flex-1 flex-col justify-between py-1">
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-start">
-                  <p className="text-charcoal dark:text-white text-sm font-bold leading-tight">{item.title}</p>
-                  <span className="material-symbols-outlined text-gold-muted text-lg cursor-pointer hover:text-red-500">close</span>
+      {items.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center p-10 text-center mt-20">
+          <div className="size-20 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-6">
+            <span className="material-symbols-outlined text-4xl text-zinc-400">shopping_bag</span>
+          </div>
+          <p className="text-zinc-500 mb-6 font-serif">Your shopping bag is empty.</p>
+          <button onClick={() => onNavigate('home')} className="bg-primary text-[#181611] px-10 py-3.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all shadow-lg active:scale-95">
+            Continue Shopping
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="px-4 pt-6 pb-2">
+            <span className="text-[10px] font-bold tracking-[0.2em] text-gold-muted uppercase">Selected Items ({items.length})</span>
+          </div>
+
+          <div className="flex flex-col gap-4 px-4 py-2">
+            {items.map((item: any) => (
+              <div key={item.id} className={`flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-zinc-800 p-3 border border-zinc-100 dark:border-zinc-700 shadow-sm transition-opacity ${updatingId === item.id ? 'opacity-50' : ''}`}>
+                <div
+                  className="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg shrink-0 cursor-pointer"
+                  style={{ backgroundImage: `url("${item.image}")` }}
+                  onClick={() => {
+                    localStorage.setItem('current_product_id', item.product_id);
+                    onNavigate('productDetail');
+                  }}
+                ></div>
+                <div className="flex flex-1 flex-col justify-between py-1">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex justify-between items-start">
+                      <p className="text-charcoal dark:text-white text-sm font-bold leading-tight line-clamp-2">{item.name}</p>
+                      <span
+                        onClick={() => handleRemoveItem(item.id)}
+                        className="material-symbols-outlined text-zinc-400 text-lg cursor-pointer hover:text-red-500"
+                      >close</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      <span className="text-primary dark:text-primary text-[9px] font-bold px-2 py-0.5 bg-primary/10 rounded-full border border-primary/20 uppercase tracking-tighter">
+                        {item.options?.metal?.name || '18K Gold'}
+                      </span>
+                      {item.options?.shape?.name && (
+                        <span className="text-charcoal/50 dark:text-white/50 text-[9px] font-bold px-2 py-0.5 bg-zinc-100 dark:bg-zinc-700 rounded-full border border-zinc-200 dark:border-zinc-600 uppercase tracking-tighter">
+                          {item.options.shape.name}
+                        </span>
+                      )}
+                      {item.options?.size && (
+                        <span className="text-charcoal/50 dark:text-white/50 text-[9px] font-bold px-2 py-0.5 bg-zinc-100 dark:bg-zinc-700 rounded-full border border-zinc-200 dark:border-zinc-600 uppercase tracking-tighter">
+                          Size: {item.options.size}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                        className="size-7 flex items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-700 text-charcoal dark:text-white active:scale-90"
+                      >
+                        <span className="material-symbols-outlined text-sm font-bold">remove</span>
+                      </button>
+                      <span className="text-xs font-bold w-6 text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                        className="size-7 flex items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-700 text-charcoal dark:text-white active:scale-90"
+                      >
+                        <span className="material-symbols-outlined text-sm font-bold">add</span>
+                      </button>
+                    </div>
+                    <p className="text-primary text-sm font-bold">{formatPrice(item.total)}</p>
+                  </div>
                 </div>
-                <p className="text-gold-muted dark:text-zinc-400 text-[11px] font-medium">{item.specs}</p>
               </div>
-              <div className="flex items-center justify-between mt-2">
-                <button className="flex min-w-[70px] cursor-pointer items-center justify-center rounded-lg h-8 px-2 flex-row-reverse bg-zinc-50 dark:bg-zinc-700 text-charcoal dark:text-white gap-1 text-[11px] font-bold border border-zinc-200 dark:border-zinc-600">
-                  <span className="material-symbols-outlined text-sm">expand_more</span>
-                  <span className="truncate">Qty: 1</span>
-                </button>
-                <p className="text-charcoal dark:text-primary font-bold text-sm">{item.price}</p>
+            ))}
+          </div>
+
+          <div className="mt-6 px-6 py-6 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-gold-muted dark:text-zinc-400 text-sm">Subtotal</span>
+              <span className="text-charcoal dark:text-white text-sm font-medium">{formatPrice(summary.subtotal)}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gold-muted dark:text-zinc-400 text-sm">Shipping</span>
+              <span className="text-charcoal dark:text-white text-sm font-medium">{summary.shipping === 0 ? 'FREE' : formatPrice(summary.shipping)}</span>
+            </div>
+            <div className="h-px bg-zinc-100 dark:bg-zinc-700 my-1"></div>
+            <div className="flex justify-between items-center">
+              <span className="text-charcoal dark:text-white text-base font-bold">Total Amount</span>
+              <span className="text-primary text-lg font-extrabold">{formatPrice(summary.total)}</span>
+            </div>
+          </div>
+
+          {/* Fixed Bottom Bar */}
+          <div className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-4 pb-8 border-t border-zinc-100 dark:border-zinc-800 z-40">
+            <div className="w-full max-w-[480px] mx-auto flex flex-col gap-3">
+              <div className="flex justify-between items-end px-1">
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-gold-muted uppercase font-bold tracking-widest">Total Amount</span>
+                  <span className="text-charcoal dark:text-white text-xl font-extrabold leading-tight">{formatPrice(summary.total)}</span>
+                </div>
               </div>
+              <button
+                onClick={() => onNavigate('checkout')}
+                className="w-full bg-primary text-[#181611] py-4 rounded-xl font-bold text-base shadow-lg shadow-primary/20 hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <span>Proceed to Checkout</span>
+                <span className="material-symbols-outlined text-lg">arrow_forward</span>
+              </button>
             </div>
           </div>
-        ))}
-      </div>
-
-      <h3 className="text-charcoal dark:text-white text-base font-bold px-4 pb-2 pt-8">Offers & Coupons</h3>
-      <div className="px-4">
-        <div className="flex items-center gap-4 bg-white dark:bg-zinc-800 px-4 py-3 rounded-xl border border-dashed border-primary/50 justify-between">
-          <div className="flex items-center gap-3">
-            <div className="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-10">
-              <span className="material-symbols-outlined">sell</span>
-            </div>
-            <div className="flex flex-col">
-              <p className="text-charcoal dark:text-white text-sm font-bold leading-none">Apply Coupon</p>
-              <p className="text-gold-muted text-[10px] font-medium leading-normal">Save up to 10% on making charges</p>
-            </div>
-          </div>
-          <button className="flex min-w-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 border-2 border-primary text-primary text-[10px] font-bold uppercase tracking-wider hover:bg-primary hover:text-[#181611] transition-all">
-            Apply
-          </button>
-        </div>
-      </div>
-
-      <h3 className="text-charcoal dark:text-white text-base font-bold px-4 pb-2 pt-8">Order Summary</h3>
-      <div className="mx-4 p-4 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 flex flex-col gap-3">
-        <div className="flex justify-between items-center">
-          <span className="text-gold-muted dark:text-zinc-400 text-sm">Gold Value (32.4g)</span>
-          <span className="text-charcoal dark:text-white text-sm font-medium">$2,100.00</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-gold-muted dark:text-zinc-400 text-sm">Diamond Value (1.7ct)</span>
-          <span className="text-charcoal dark:text-white text-sm font-medium">$3,200.00</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-gold-muted dark:text-zinc-400 text-sm">Making Charges</span>
-          <span className="text-charcoal dark:text-white text-sm font-medium">$650.00</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-gold-muted dark:text-zinc-400 text-sm">GST (3%)</span>
-          <span className="text-charcoal dark:text-white text-sm font-medium">$300.00</span>
-        </div>
-        <div className="h-px bg-zinc-100 dark:bg-zinc-700 my-1"></div>
-        <div className="flex justify-between items-center">
-          <span className="text-charcoal dark:text-white text-base font-bold">Total Payable</span>
-          <span className="text-primary text-lg font-extrabold">$6,250.00</span>
-        </div>
-      </div>
-
-      <div className="flex justify-center items-center gap-6 py-10 opacity-60">
-        {['verified', 'local_shipping', 'history'].map((icon, i) => (
-          <div key={i} className="flex flex-col items-center gap-1">
-            <span className="material-symbols-outlined text-2xl">{icon}</span>
-            <span className="text-[8px] uppercase font-bold tracking-widest">{['Certified', 'Insured', 'Returns'][i]}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-4 border-t border-zinc-100 dark:border-zinc-800 z-40 flex justify-center">
-        <div className="w-full max-w-[430px] flex flex-col gap-3">
-          <div className="flex justify-between items-end px-1">
-            <div className="flex flex-col">
-              <span className="text-[10px] text-gold-muted uppercase font-bold tracking-widest">Total Amount</span>
-              <span className="text-charcoal dark:text-white text-xl font-extrabold leading-tight">$6,250.00</span>
-            </div>
-            <div className="text-primary text-[10px] font-bold cursor-pointer">View Breakup</div>
-          </div>
-          <button 
-            onClick={() => onNavigate('checkout')}
-            className="w-full bg-primary text-[#181611] py-4 rounded-xl font-bold text-base shadow-lg shadow-primary/20 hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-          >
-            <span>Proceed to Checkout</span>
-            <span className="material-symbols-outlined text-lg">arrow_forward</span>
-          </button>
-          <div className="h-6"></div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };

@@ -6,6 +6,14 @@ export const Studio: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   const handleDesign = async () => {
     if (!prompt.trim() || loading) return;
@@ -13,9 +21,10 @@ export const Studio: React.FC = () => {
     try {
       const img = await generateJewelryDesign(prompt);
       setResult(img);
+      setToast({ message: 'A masterpiece is born.', type: 'success' });
     } catch (e) {
       console.error(e);
-      alert("Our artisans are busy. Please try again later.");
+      setToast({ message: 'Our artisans are busy. Please try again later.', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -23,6 +32,16 @@ export const Studio: React.FC = () => {
 
   return (
     <div className="flex flex-col p-5 space-y-6 pb-24">
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-[400px] animate-in slide-in-from-top-4 fade-in duration-300">
+          <div className={`p-4 rounded-2xl shadow-2xl backdrop-blur-xl border ${toast.type === 'success' ? 'bg-white/90 dark:bg-zinc-900/90 border-primary/20 text-charcoal' : 'bg-red-50/90 border-red-200 text-red-600'
+            }`}>
+            <p className="text-xs font-bold tracking-wide text-center uppercase">{toast.message}</p>
+          </div>
+        </div>
+      )}
+
       <div className="text-center">
         <h2 className="text-2xl font-display italic text-zinc-900 dark:text-white">Design Studio</h2>
         <p className="text-[9px] text-primary uppercase tracking-[0.3em]">Manifest Your Vision</p>
@@ -37,7 +56,7 @@ export const Studio: React.FC = () => {
             <p className="text-xs font-display italic">Describe your masterpiece</p>
           </div>
         )}
-        
+
         {loading && (
           <div className="absolute inset-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-4">
             <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>

@@ -20,4 +20,4 @@ export interface CollectionItem {
   carat?: string;
 }
 
-export type View = 'home' | 'studio' | 'concierge' | 'collection' | 'search' | 'auctions' | 'cart' | 'checkout' | 'orders' | 'social' | 'socialDetail' | 'profile' | 'productDetail';
+export type View = 'home' | 'studio' | 'concierge' | 'collection' | 'search' | 'auctions' | 'auctionDetail' | 'cart' | 'checkout' | 'orders' | 'orderDetail' | 'orderSuccess' | 'social' | 'socialDetail' | 'profile' | 'productDetail' | 'addresses' | 'login' | 'register';
